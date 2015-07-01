@@ -5,13 +5,15 @@ import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.analysis.core.FilesParser;
 import hudson.plugins.analysis.core.HealthAwarePublisher;
@@ -35,7 +37,7 @@ public class DryPublisher extends HealthAwarePublisher {
 
     private static final String DEFAULT_DRY_PATTERN = "**/cpd.xml";
     /** Ant file-set pattern of files to work with. */
-    private final String pattern;
+    private String pattern = DEFAULT_DRY_PATTERN;
 
     /** Minimum number of duplicate lines for high priority warnings. @since 2.5 */
     private final int highThreshold;
@@ -168,15 +170,15 @@ public class DryPublisher extends HealthAwarePublisher {
     }
 
     @Override
-    public BuildResult perform(final AbstractBuild<?, ?> build, final PluginLogger logger) throws InterruptedException, IOException {
+    public BuildResult perform(final Run<?, ?> build, final FilePath workspace, final TaskListener listener, final PluginLogger logger) throws InterruptedException, IOException {
         logger.log("Collecting duplicate code analysis files...");
 
         FilesParser dryCollector = new FilesParser(PLUGIN_NAME, StringUtils.defaultIfEmpty(getPattern(), DEFAULT_DRY_PATTERN),
-                    new DuplicationParserRegistry(getNormalThreshold(), getHighThreshold(), build.getWorkspace().getRemote(),
+                    new DuplicationParserRegistry(getNormalThreshold(), getHighThreshold(), workspace.getRemote(),
                             getDefaultEncoding()),
                     shouldDetectModules(), isMavenBuild(build));
 
-        ParserResult project = build.getWorkspace().act(dryCollector);
+        ParserResult project = workspace.act(dryCollector);
         logger.logLines(project.getLogMessages());
 
         DryResult result = new DryResult(build, getDefaultEncoding(), project,

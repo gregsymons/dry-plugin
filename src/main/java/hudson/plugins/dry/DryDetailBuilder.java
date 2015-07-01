@@ -1,6 +1,7 @@
 package hudson.plugins.dry;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.AnnotationContainer;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.views.DetailFactory;
@@ -19,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class DryDetailBuilder extends DetailFactory {
     @Override
-    public Object createDetails(final String link, final AbstractBuild<?, ?> owner,
+    public Object createDetails(final String link, final Run<?, ?> owner,
             final AnnotationContainer container, final String defaultEncoding, final String displayName) {
         if (link.startsWith("link.")) {
             String suffix = StringUtils.substringAfter(link, "link.");
@@ -47,7 +48,7 @@ public class DryDetailBuilder extends DetailFactory {
      *            to ID
      * @return the detail view or <code>null</code>
      */
-    private Object createDrySourceDetail(final AbstractBuild<?, ?> owner,
+    private Object createDrySourceDetail(final Run<?, ?> owner,
             final AnnotationContainer container, final String defaultEncoding,
             final String fromString, final String toString) {
         long from = Long.parseLong(fromString);
@@ -61,7 +62,7 @@ public class DryDetailBuilder extends DetailFactory {
     }
 
     @Override
-    protected TabDetail createTabDetail(final AbstractBuild<?, ?> owner, final Collection<FileAnnotation> annotations,
+    protected TabDetail createTabDetail(final Run<?, ?> owner, final Collection<FileAnnotation> annotations,
             final String url, final String defaultEncoding) {
         return new DryTabDetail(owner, this, annotations, url, defaultEncoding);
     }

@@ -1,6 +1,7 @@
 package hudson.plugins.dry;
 
 import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.analysis.views.DetailFactory;
 import hudson.plugins.analysis.views.TabDetail;
@@ -18,19 +19,17 @@ public class DryTabDetail extends TabDetail {
 
     /**
      * Creates a new instance of {@link TabDetail}.
-     *
-     * @param owner
+     *  @param owner
      *            current build as owner of this action.
      * @param detailFactory
      *            the detail factory to use
      * @param annotations
-     *            the module to show the details for
+ *            the module to show the details for
      * @param url
-     *            URL to render the content of this tab
+*            URL to render the content of this tab
      * @param defaultEncoding
-     *            the default encoding to be used when reading and parsing files
      */
-    public DryTabDetail(final AbstractBuild<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
+    public DryTabDetail(final Run<?, ?> owner, final DetailFactory detailFactory, final Collection<FileAnnotation> annotations, final String url, final String defaultEncoding) {
         super(owner, detailFactory, annotations, url, defaultEncoding);
     }
 
